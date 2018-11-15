@@ -1,4 +1,3 @@
-
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "merge_params/version"
@@ -8,12 +7,13 @@ Gem::Specification.new do |spec|
   spec.version       = MergeParams.version
   spec.authors       = ["Tyler Rick"]
   spec.email         = ["tyler@tylerrick.com"]
+  spec.license       = "MIT"
 
   spec.summary       = %q{/}
-  spec.description   = s.summary
+  spec.description   = spec.summary
   spec.homepage      = "http://github.com/TylerRick/merge_params"
 
-  spec.metadata["homepage_uri"] = spec.homepage
+  spec.metadata["homepage_uri"]    = spec.homepage
   spec.metadata["source_code_uri"] = spec.homepage
   spec.metadata["changelog_uri"] = "TODO: Put your gem's Changelog.md URL here."
 
