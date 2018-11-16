@@ -1,6 +1,6 @@
-require "merge_params/version"
+require 'merge_params/version'
+require 'merge_params/helpers'
 
 module MergeParams
-  class Error < StandardError; end
-  # Your code goes here...
+  autoload :Helpers, 'merge_params/helpers'
 end
