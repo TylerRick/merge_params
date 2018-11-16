@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["tyler@tylerrick.com"]
   spec.license       = "MIT"
 
-  spec.summary       = %q{/}
+  spec.summary       = %q{Safely merge params for use with url_for and more}
   spec.description   = spec.summary
   spec.homepage      = "http://github.com/TylerRick/merge_params"
 
@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.required_ruby_version = ">= 2.3.0"
+  spec.add_dependency "activesupport", [">= 4.2", "< 5.3"]
   spec.add_dependency "actionpack", [">= 4.2", "< 5.3"]
 
   spec.add_development_dependency "bundler", "~> 1.17"

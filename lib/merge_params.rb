@@ -1,3 +1,5 @@
+require 'active_support'
+
 require 'merge_params/version'
 require 'merge_params/helpers'
 

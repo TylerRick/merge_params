@@ -68,6 +68,10 @@ module MergeParams::Helpers
 
   # Adds params to the query string
   # (Unlike url_for_merge, which tries to generate a route from the params.)
+  # TODO: Should URL be first like https://libraries.io/github/jordanmaguire/uri_query_merger ?
+  #   UriQueryMerger.new("http://www.google.com?other=1", {jordan: "rules"}).merge
+  # Can we make it work that way when a URL is supplied buth otherwise let the params be the first
+  # and only argument (to optimize for that more common use case)?
   def add_params(params = {}, url = request.fullpath)
     uri = URI(url)
     params    = parse_nested_query(uri.query || '').merge(params)
@@ -82,7 +86,7 @@ module MergeParams::Helpers
       :merge_params,
       :merge_url_for,
       :add_params
-    )
+    ) if respond_to?(:helper_method)
   end
 
 private
