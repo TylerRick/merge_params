@@ -54,6 +54,29 @@ module MergeParams::Helpers
     params_for_url_for.merge(new_params)
   end
 
+  # Easily extract just certain param keys.
+  #
+  # Can't use permit().to_h — for example,
+  #    params.permit(:page, :per_page, :filters).to_h
+  # or you'll get an error about whatever other unrelated keys happen to be set:
+  #   found unpermitted parameters: :utf8, :commit, :company_id
+  #
+  # One good solution might be to have a permitted_params method defined with *all* of your
+  # permitted params for this controller, and then you could make other methods that fetch subsets
+  # of those params using slice. But if you don't want to do that, this slice_params helper is
+  # another good option.
+  #
+  # Other options include:
+  # - You *could* add those unrelated keys to always_permitted_parameters ... but that only works if
+  #   all of them should be permitted *everywhere* — there are probably controller-specific params
+  #   present that are permitted for this controller.
+  # - You could also change action_on_unpermitted_parameters — but unfortunately, there's no way to
+  #   pass a temporary override value for that directly to permit, so the only option is to change it
+  #   temporarily globally, which is inconvenient and not thread-safe.
+  def slice_params(*keys)
+    params_for_url_for.slice(*keys)
+  end
+
   # Safely merges the given params with the params from the current request, then generates a route
   # from the merged params.
   def merge_url_for(new_params = {})
