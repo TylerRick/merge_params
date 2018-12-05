@@ -98,7 +98,7 @@ module MergeParams::Helpers
   def add_params(params = {}, url = request.fullpath)
     uri = URI(url)
     params    = parse_nested_query(uri.query || '').merge(params)
-    uri.query = Rack::Utils.build_nested_query(params)
+    uri.query = Rack::Utils.build_nested_query(params) if params.present?
     uri.to_s
   end
 
