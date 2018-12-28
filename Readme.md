@@ -1,5 +1,7 @@
 # MergeParams
 
+[![Gem Version](https://badge.fury.io/rb/merge_params.svg)](https://badge.fury.io/rb/merge_params)
+
 ## Why do we need it?
 
 Have you ever wanted to take the current route and change just one parameter in the route to
