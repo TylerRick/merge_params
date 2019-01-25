@@ -79,13 +79,22 @@ module MergeParams::Helpers
 
   # Safely merges the given params with the params from the current request, then generates a route
   # from the merged params.
+  # You can remove a key by passing nil as the value, for example {key: nil}.
   def merge_url_for(new_params = {})
     url = url_for(merge_params(new_params))
 
     # Now pass along in the *query string* any params that we couldn't pass to url_for because they
     # were reserved options.
     query_params_already_added = parse_nested_query(URI(url).query || '')
-    query_params_to_add = query_params.except(*query_params_already_added.keys)
+    # Some params from new_params (like company_id) that we pass in may be recognized by a route and
+    # therefore no longer be query params. We use recognize_path to find those params that ended up
+    # as route params instead of query_params but are nonetheless aready added to the url.
+    params_already_added = Rails.application.routes.recognize_path(url).merge(query_params_already_added)
+    keys_already_added = params_already_added.keys
+    # Allow keys that are currently in query_params to be deleted by setting their value to nil in
+    # new_params.
+    keys_to_delete = new_params.select {|k,v| v.nil?}.keys
+    query_params_to_add = query_params.except(*keys_already_added + keys_to_delete)
     add_params(query_params_to_add, url)
   end
 
