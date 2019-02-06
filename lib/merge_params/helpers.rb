@@ -83,13 +83,14 @@ module MergeParams::Helpers
   def merge_url_for(new_params = {})
     url = url_for(merge_params(new_params))
 
-    # Now pass along in the *query string* any params that we couldn't pass to url_for because they
-    # were reserved options.
-    query_params_already_added = parse_nested_query(URI(url).query || '')
-    # Some params from new_params (like company_id) that we pass in may be recognized by a route and
-    # therefore no longer be query params. We use recognize_path to find those params that ended up
-    # as route params instead of query_params but are nonetheless aready added to the url.
-    params_already_added = Rails.application.routes.recognize_path(url).merge(query_params_already_added)
+#    # Now pass along in the *query string* any params that we couldn't pass to url_for because they
+#    # were reserved options.
+#    query_params_already_added = parse_nested_query(URI(url).query || '')
+#    # Some params from new_params (like company_id) that we pass in may be recognized by a route and
+#    # therefore no longer be query params. We use recognize_path to find those params that ended up
+#    # as route params instead of query_params but are nonetheless already added to the url.
+#    params_already_added = Rails.application.routes.recognize_path(url).merge(query_params_already_added)
+    params_already_added = params_from_url(url)
     keys_already_added = params_already_added.keys
     # Allow keys that are currently in query_params to be deleted by setting their value to nil in
     # new_params.
@@ -121,7 +122,12 @@ module MergeParams::Helpers
     ) if respond_to?(:helper_method)
   end
 
-private
+  # Parsing helpers
+  def params_from_url(url)
+    query_params = parse_nested_query(URI(url).query || '')
+    route_params = Rails.application.routes.recognize_path(url.to_s)
+    route_params.merge(query_params)
+  end
 
   def parse_nested_query(query)
     Rack::Utils.parse_nested_query(query || '').symbolize_keys
