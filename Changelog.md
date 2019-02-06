@@ -5,6 +5,14 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ## (Unreleased)
 
+## 0.4.0 (2019-02-07)
+
+### Added/Changed
+- Better support for nested hashes: Using `deep_symbolize_keys` instead of `symbolize_keys`.
+- Allow keys in nested hashes to be deleted by setting their value to nil
+- Add `params_from_url(url)` helper
+- Allow a hash to be passed as an argument to `params_for_url_for`
+- Add dependency on `facets` gem
 
 ## 0.3.0 (2019-01-24)
 
