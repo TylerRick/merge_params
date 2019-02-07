@@ -1,25 +1,27 @@
 require 'uri'
+require 'facets/hash/recurse'
+require 'facets/hash/diff'
 
 module MergeParams::Helpers
   extend ActiveSupport::Concern
 
   # request.parameters but with symbolized keys.
   def request_params
-    request.parameters.symbolize_keys
+    request.parameters.deep_symbolize_keys
   end
 
   # request.parameters (which also includes POST params) but with only those keys that would
   # normally be passed in a query string (without :controller, :action, :format) and with symbolized
   # keys.
   def query_params_from_request_params
-    request.parameters.symbolize_keys.
-      except(*request.path_parameters.symbolize_keys.keys)
+    request.parameters.deep_symbolize_keys.
+      except(*request.path_parameters.deep_symbolize_keys.keys)
   end
 
   # Returns a hash of params from the query string (https://en.wikipedia.org/wiki/Query_string),
   # with symbolized keys.
   def query_params
-    request.query_parameters.symbolize_keys
+    request.query_parameters.deep_symbolize_keys
   end
 
   # Params that can safely be passed to url_for to build a route. (Used by merge_url_for.)
@@ -40,8 +42,9 @@ module MergeParams::Helpers
   # (And we don't even need to pass the path_parameters on to url_for because url_for already
   # includes those (from :_recall)
   #
-  def params_for_url_for
-    params.to_unsafe_h.symbolize_keys.except(
+  def params_for_url_for(params = params())
+    params = params.to_unsafe_h if params.respond_to?(:to_unsafe_h)
+    params.deep_symbolize_keys.except(
       *ActionDispatch::Routing::RouteSet::RESERVED_OPTIONS,
       :controller,
       :action,
@@ -51,7 +54,8 @@ module MergeParams::Helpers
 
   # Safely merges the given params with the params from the current request
   def merge_params(new_params = {})
-    params_for_url_for.merge(new_params)
+    params_for_url_for.
+      merge(new_params.deep_symbolize_keys)
   end
 
   # Easily extract just certain param keys.
@@ -92,23 +96,23 @@ module MergeParams::Helpers
 #    params_already_added = Rails.application.routes.recognize_path(url).merge(query_params_already_added)
     params_already_added = params_from_url(url)
     keys_already_added = params_already_added.keys
-    # Allow keys that are currently in query_params to be deleted by setting their value to nil in
-    # new_params.
-    keys_to_delete = new_params.select {|k,v| v.nil?}.keys
-    query_params_to_add = query_params.except(*keys_already_added + keys_to_delete)
+
+    #query_params_to_add = new_params - params_already_added
+    #query_params_to_add = new_params.diff(params_already_added)
+    query_params_to_add = new_params.except(*keys_already_added)
+
     add_params(query_params_to_add, url)
   end
 
   # Adds params to the query string
   # (Unlike url_for_merge, which tries to generate a route from the params.)
-  # TODO: Should URL be first like https://libraries.io/github/jordanmaguire/uri_query_merger ?
-  #   UriQueryMerger.new("http://www.google.com?other=1", {jordan: "rules"}).merge
-  # Can we make it work that way when a URL is supplied buth otherwise let the params be the first
-  # and only argument (to optimize for that more common use case)?
-  def add_params(params = {}, url = request.fullpath)
+  def add_params(new_params = {}, url = request.fullpath)
     uri = URI(url)
-    params    = parse_nested_query(uri.query || '').merge(params)
-    uri.query = Rack::Utils.build_nested_query(params) if params.present?
+    # Allow keys that are currently in query_params to be deleted by setting their value to nil in
+    # new_params (including in nested hashes).
+    merged_params = parse_nested_query(uri.query || '').
+      deep_merge(new_params).recurse(&:compact)
+    uri.query = Rack::Utils.build_nested_query(merged_params).presence
     uri.to_s
   end
 
@@ -126,10 +130,12 @@ module MergeParams::Helpers
   def params_from_url(url)
     query_params = parse_nested_query(URI(url).query || '')
     route_params = Rails.application.routes.recognize_path(url.to_s)
-    route_params.merge(query_params)
+    params_for_url_for(
+      route_params.merge(query_params)
+    )
   end
 
   def parse_nested_query(query)
-    Rack::Utils.parse_nested_query(query || '').symbolize_keys
+    Rack::Utils.parse_nested_query(query || '').deep_symbolize_keys
   end
 end
