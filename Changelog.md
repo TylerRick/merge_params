@@ -5,6 +5,10 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ## (Unreleased)
 
+## 0.4.1 (2019-02-08)
+- Fix issue with merge_params not merging nested hashes as expected (changed to
+  use `deep_merge` instead of `merge`)
+
 ## 0.4.0 (2019-02-07)
 
 ### Added/Changed

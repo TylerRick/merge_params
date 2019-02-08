@@ -58,7 +58,7 @@ module MergeParams::Helpers
   # Safely merges the given params with the params from the current request
   def merge_params(new_params = {})
     params_for_url_for.
-      merge(new_params.deep_symbolize_keys)
+      deep_merge(new_params.deep_symbolize_keys)
   end
 
   # Easily extract just certain param keys.
