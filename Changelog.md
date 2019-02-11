@@ -5,6 +5,11 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ## (Unreleased)
 
+## 0.4.2 (2019-02-10)
+- Fix `merge_url_for` to not pass on reserved options like only_path (which were only intended for
+  consumption by `url_for`) to `add_params`. It was adding it to the end of the URL, like
+  `only_path=true`.
+
 ## 0.4.1 (2019-02-08)
 - Fix issue with merge_params not merging nested hashes as expected (changed to
   use `deep_merge` instead of `merge`)

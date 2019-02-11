@@ -98,11 +98,12 @@ module MergeParams::Helpers
 #    # as route params instead of query_params but are nonetheless already added to the url.
 #    params_already_added = Rails.application.routes.recognize_path(url).merge(query_params_already_added)
     params_already_added = params_from_url(url)
-    query_params_to_add = new_params.recursively_comparing(params_already_added).graph { |k,v, other|
-      if v.is_a?(Hash) || v.nil? || other.nil?
-        [k, v]
-      end
-    }
+    query_params_to_add = params_for_url_for(new_params).
+      recursively_comparing(params_already_added).graph { |k,v, other|
+        if v.is_a?(Hash) || v.nil? || other.nil?
+          [k, v]
+        end
+      }
     add_params(query_params_to_add, url)
   end
 
