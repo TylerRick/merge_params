@@ -104,12 +104,12 @@ module MergeParams::Helpers
           [k, v]
         end
       }
-    add_params(query_params_to_add, url)
+    add_params(url, query_params_to_add)
   end
 
   # Adds params to the query string
   # (Unlike url_for_merge, which tries to generate a route from the params.)
-  def add_params(new_params = {}, url = request.fullpath)
+  def add_params(url = request.fullpath, new_params = {})
     uri = URI(url)
     # Allow keys that are currently in query_params to be deleted by setting their value to nil in
     # new_params (including in nested hashes).

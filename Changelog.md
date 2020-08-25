@@ -5,6 +5,11 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ## (Unreleased)
 
+## 0.5.0 (2020-08-25)
+- Change the order of arguments for `add_params` to `add_params(url, query_params_to_add)`.
+  This feels more natural, since you are adding the new query params to the _end_ of the given URL.
+  It is also more consistent with the Rails route helpers, like `something_path(query_params_to_add)`.
+
 ## 0.4.2 (2019-02-10)
 - Fix `merge_url_for` to not pass on reserved options like only_path (which were only intended for
   consumption by `url_for`) to `add_params`. It was adding it to the end of the URL, like
