@@ -5,6 +5,13 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ## (Unreleased)
 
+## 0.6.0 (2026-07-15)
+
+- Loosen the `activesupport` / `actionpack` dependency cap (was `< 5.3`) so the gem installs on
+  modern Rails (6/7/8). The code itself was already compatible.
+- Modernize the gemspec (`require_relative` for the version file, derive the homepage from the gem
+  name).
+
 ## 0.5.0 (2020-08-25)
 - Change the order of arguments for `add_params` to `add_params(url, query_params_to_add)`.
   This feels more natural, since you are adding the new query params to the _end_ of the given URL.
